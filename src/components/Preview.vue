@@ -28,11 +28,11 @@ export default {
 	data() {return {
 		vanilla_colors: JSON.parse(JSON.stringify(VANILLA_COLORS)),
 		texture_previews: {
-			oak: {src: 'src/assets/leaves_oak.png', map: 'foliage', shade: true},
-			birch: {src: './src/assets/leaves_birch.png', map: 'birch', shade: true},
-			evergreen: {src: 'src/assets/leaves_spruce.png', map: 'evergreen', shade: true},
-			tallgrass: {src: 'src/assets/tallgrass.png', map: 'grass'},
-			grass: {src: 'src/assets/grass_top.png', map: 'grass', shade: true},
+			oak: {src: '/textures/leaves_oak.png', map: 'foliage', shade: true},
+			birch: {src: '/textures/leaves_birch.png', map: 'birch', shade: true},
+			evergreen: {src: '/textures/leaves_spruce.png', map: 'evergreen', shade: true},
+			tallgrass: {src: '/textures/tallgrass.png', map: 'grass'},
+			grass: {src: '/textures/grass_top.png', map: 'grass', shade: true},
 		}
 	}}
 }
