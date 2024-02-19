@@ -25,6 +25,7 @@ const BIOME_COORDS = {
 	savanna: [0, 255],
 	meadow: [178, 193],
 	snow: [254, 254],
+	stony_peaks: [0, 178],
 }
 
 export const VANILLA_COLORS = {
@@ -111,8 +112,97 @@ export const VANILLA_COLORS = {
 		"foliage": "#60a17b",
 		"evergreen": "#619961",
 		"birch": "#80a755"
+	},
+	"stony_peaks": {
+		"grass": "#80b496",//tbd
+		"foliage": "#60a17b",//tbd
+		"evergreen": "#619961",//tbd
+		"birch": "#80a755"//tbd
 	}
 }
+
+const BIOME_SIDE_INDICES = {
+	plains: 11,
+	birch_forest: 5,
+	jungle: 3,
+	jungle_edge: 3,
+	mushroom: 4,
+	forest: 0,
+	taiga: 6,
+	water: 13,
+	extreme_hills: 1,
+	savanna: 2,
+	meadow: 8,
+	snow: 10,
+};
+const VANILLA_SIDE_COLORS = [
+	{
+		"overlay_color" : "#79c05a",// Forest
+		"path" : "textures/blocks/grass_side"
+	},
+	{
+		"overlay_color" : "#8ab689",// Extreme Hills
+		"path" : "textures/blocks/grass_side"
+	},
+	{
+		"overlay_color" : "#bfb755",// Desert, Savanna
+		"path" : "textures/blocks/grass_side"
+	},
+	{
+		"overlay_color" : "#59c93c",// Jungle
+		"path" : "textures/blocks/grass_side"
+	},
+	{
+		"overlay_color" : "#55c93f",// Mushroom
+		"path" : "textures/blocks/grass_side"
+	},
+	{
+		"overlay_color" : "#88bb66",// Birch
+		"path" : "textures/blocks/grass_side"
+	},
+	{
+		"overlay_color" : "#86b87f",// Taiga
+		"path" : "textures/blocks/grass_side"
+	},
+	{
+		"overlay_color" : "#64c73f",
+		"path" : "textures/blocks/grass_side"
+	},
+	{
+		"overlay_color" : "#86b783",// Meadow?
+		"path" : "textures/blocks/grass_side"
+	},
+	{
+		"overlay_color" : "#83b593",
+		"path" : "textures/blocks/grass_side"
+	},
+	{
+		"overlay_color" : "#80b497",// Snow
+		"path" : "textures/blocks/grass_side"
+	},
+	{
+		"overlay_color" : "#91bd59",// Plains
+		"path" : "textures/blocks/grass_side"
+	},
+	{
+		"overlay_color" : "#90814d",
+		"path" : "textures/blocks/grass_side"
+	},
+	{
+		"overlay_color" : "#8eb971",// Water
+		"path" : "textures/blocks/grass_side"
+	},
+	{
+		"overlay_color" : "#6a7039",
+		"path" : "textures/blocks/grass_side"
+	},
+	{
+		"overlay_color" : "#507a32",
+		"path" : "textures/blocks/grass_side"
+	},
+	"textures/blocks/grass_side_snowed"// Snow on top
+]
+
 
 import JSZip from 'jszip'
 import { saveAs } from "file-saver";
@@ -146,6 +236,16 @@ export async function generateMaps(biome_data) {
 	let zip = new JSZip();
 	console.log(biome_data)
 
+	let grass_side_texture_data = JSON.parse(JSON.stringify(VANILLA_SIDE_COLORS));
+	let terrain_textures = {
+		"num_mip_levels": 4,
+		"padding": 8,
+		"resource_pack_name": "vanilla",
+		"texture_data": {
+			grass_side: {textures: grass_side_texture_data}
+		}
+	};
+
 	for (let map_type in MAPS) {
 
 		let canvas = document.createElement('canvas');
@@ -172,8 +272,17 @@ export async function generateMaps(biome_data) {
 		console.log(canvas);
 	}
 
+	for (let biome_id in BIOME_SIDE_INDICES) {
+		let index = BIOME_SIDE_INDICES[biome_id];
+		if ((biome_data[biome_id] && biome_data[biome_id].grass)) {
+			grass_side_texture_data[index].overlay_color = biome_data[biome_id].grass;
+		}
+	}
+
 	let config_content = compileJSON({biomes: biome_data});
 	zip.file('_worldincolors.json', config_content);
+
+	zip.file('terrain_texture.json', compileJSON(terrain_textures));
 
 	zip.generateAsync({type: 'blob'}).then(function(content) {
 		console.log(content);
