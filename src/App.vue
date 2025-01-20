@@ -1,24 +1,23 @@
 <script setup>
-import BiomeList from './components/BiomeList.vue'
-import ColorList from './components/ColorList.vue'
 import Preview from './components/Preview.vue'
 </script>
 
 <template>
 	<header>
+		<button @click="newProject()">New Project</button>
 		<button @click="loadFile()">Import Config</button>
-		<button @click="generate()">Generate</button>
-		<button @click="save()">Save</button>
+		<button @click="generate(); save()" class="export_button">Export Colors</button>
 	</header>
 	<main>
-		<div id="biome_list" v-if="data">
+		<div id="biome_list" class="panel" v-if="data">
+			<h2>BIOMES</h2>
 			<ul>
 				<li v-for="(biome_data, biome_id) in biomes" :key="biome_id" :class="{selected: selected_biome == biome_id}" @click="select(biome_id, selected_map)">
 					{{ biome_id }}
 				</li>
 			</ul>
 		</div>
-		<div id="map_list" v-if="data && selected_biome">
+		<div id="map_list" class="panel" v-if="data && selected_biome">
 			<ul>
 				<li v-for="(map, map_id) in color_maps" :key="map_id" :class="{selected: selected_map == map_id}" @click="select(selected_biome, map_id)">
 					{{ map_id }}
@@ -32,7 +31,7 @@ import Preview from './components/Preview.vue'
 </template>
 
 <script>
-import {downloadPackage, generateMaps, importFile} from './scripts/generate'
+import {downloadPackage, generateMaps, getEmptyProject, importFile} from './scripts/generate'
 import {Chrome} from '@ckpack/vue-color';
 
 export default {
@@ -69,6 +68,9 @@ export default {
 			let data = await importFile();
 			if (data) this.data = data;
 		},
+		newProject() {
+			this.data = getEmptyProject();
+		},
 		generate() {
 			generateMaps(this.data)
 		},
@@ -89,29 +91,59 @@ export default {
 <style scoped>
 header {
 	line-height: 1.5;
+	gap: 4px;
+	padding: 4px;
+	display: flex;
 }
+header button {
+	padding: 8px 10px;
+}
+button.export_button {
+	background-color: #97df58;
+    color: #141414;
+	margin-left: auto;
+}
+button.export_button:hover {
+	background-color: #c0f878;
+    color: #141414;
+	margin-left: auto;
+}
+
+
 main {
 	display: flex;
 	flex-direction: row;
 	flex-grow: 1;
 }
-#biome_list {
+.panel {
 	width: 30%;
+}
+#biome_list {
 	border-right: 1px solid #445;
 }
 #map_list {
-	width: 30%;
 	border-right: 1px solid #445;
 }
 #preview {
 	width: 40%;
 }
-li {
-	cursor: pointer;
+.panel h2 {
+	padding: 2px 10px;
+}
+.panel ul {
 	padding: 4px;
 }
-li.selected {
+.panel ul li {
+	cursor: pointer;
+	padding: 6px 10px;
+    border-radius: 6px;
+}
+.panel ul li:hover {
+	color: var(--color-text-highlight);
+}
+.panel ul li.selected {
 	background-color: #3d3d3e;
+	color: var(--color-text-highlight);
 }
 .color_preview {
 	height: 22px;
@@ -123,5 +155,7 @@ li.selected {
 	margin: auto;
 	margin-top: 30px;
 }
+
+
 
 </style>

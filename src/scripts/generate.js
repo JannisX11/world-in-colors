@@ -230,6 +230,10 @@ export async function importFile() {
 	console.log(all)
 	return all;
 }
+export function getEmptyProject() {
+	let all = JSON.parse(JSON.stringify(VANILLA_COLORS));
+	return all;
+}
 
 export async function generateMaps(biome_data) {
 
